@@ -15,7 +15,7 @@ def plot_roc(y_test, y_predicted):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic example')
+    plt.title('Receiver Operating Characteristic Curve of Prediction')
     plt.legend(loc="lower right")
     plt.show()
     

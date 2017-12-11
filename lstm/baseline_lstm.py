@@ -9,6 +9,7 @@ from keras.preprocessing import sequence
 from keras.models import Sequential  
 from keras.layers.core import Dense, Dropout, Activation  
 from keras.layers.recurrent import LSTM
+from keras.optimizers import Adam
 #from keras import optimizer
 
 from sklearn.metrics import precision_score
@@ -20,7 +21,7 @@ from visualize import *
 WINDOW = 24
 
 #data = sio.loadmat('lstm_xy.mat')
-data = pickle.load(open('lstm_xy.p','r'))
+data = pickle.load(open('lstm_xy_new.p','r'))
 
 X_train = np.array(data['X_train'])
 #print X_train[0]
@@ -35,23 +36,24 @@ y_test = np.array(data['y_test'])
 
 in_neurons = X_train.shape[2]
 out_neurons = 1
-hidden_neurons = 50
+hidden_neurons = 25
 
 model = Sequential()
 
 
 model.add(LSTM(hidden_neurons, return_sequences=False, input_shape=(None, in_neurons)))
-model.add(Dropout(0.1))
-model.add(Dense(20, input_dim=hidden_neurons, activation = 'relu'))  
-model.add(Dense(out_neurons, input_dim=20 , activation = 'sigmoid'))  
-#sgd = optimizer.
-model.compile(loss='binary_crossentropy', optimizer="adam",metrics=['accuracy','binary_crossentropy'])
+#model.add(Dropout(0.1))
+model.add(Dense(10, input_dim=hidden_neurons, activation = 'relu'))  
+model.add(Dense(out_neurons, input_dim=10 , activation = 'sigmoid'))  
+
+adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+model.compile(loss='binary_crossentropy', optimizer=adam,metrics=['accuracy','binary_crossentropy'])
 
 
 model.summary()
-class_weight = {0:1, 1:5}
+class_weight = {0:1, 1:2.5}
 
-model.fit(X_train, y_train, batch_size=50, epochs=100, class_weight = class_weight) #, validation_split = 0.2)
+model.fit(X_train, y_train, batch_size=100, epochs=100, class_weight = class_weight) #, validation_split = 0.2)
 
 y_pred = model.predict(X_test)
 y_pred = np.round(y_pred)
